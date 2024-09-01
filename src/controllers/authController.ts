@@ -75,3 +75,55 @@ export const signup = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const signin = async (req: Request, res: Response) => {
+  try {
+    const { email, password } = req.body;
+
+    const user = await prisma.user.findFirst({
+      where: { email: email },
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "User does not exist",
+      });
+    }
+
+    const isPasswordValid = bcrypt.compareSync(password, user?.password);
+
+    if (!isPasswordValid) {
+      return res.status(400).json({
+        success: false,
+        message: "Incorrect Password",
+      });
+    }
+
+    const token = jwt.sign(
+      { userId: user?.id, email: user?.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "48h" }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Sign-in successful",
+      data: user,
+      user_token: token,
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error",
+        error: error.message,
+      });
+    } else {
+      return res.status(500).json({
+        success: false,
+        message: "An unknown error occured",
+      });
+    }
+  }
+};
