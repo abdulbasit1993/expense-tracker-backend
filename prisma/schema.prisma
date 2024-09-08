@@ -21,6 +21,7 @@ model User {
   roles     UserRole[]
   createdAt DateTime   @default(now()) @map("created_at")
   updatedAt DateTime   @updatedAt @map("updated_at")
+  OTP       OTP[]
 
   @@map("users")
 }
@@ -42,9 +43,20 @@ model UserRole {
   id     Int   @id @default(autoincrement())
   user   User  @relation(fields: [userId], references: [id])
   userId Int   @map("user_id")
-  role   Roles @relation(fields: [roleId], references: [id])
+  role   Roles @relation(fields: [roleId], references: [id], onDelete: Cascade)
   roleId Int   @map("role_id")
 
   @@unique([userId, roleId])
   @@map("user_roles")
+}
+
+model OTP {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int      @map("user_id")
+  otp       String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("otp")
 }

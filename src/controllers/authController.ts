@@ -1,20 +1,44 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
-const prisma = new PrismaClient();
+import * as dotenv from "dotenv";
+dotenv.config();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const prisma = new PrismaClient();
 
 export const signup = async (req: Request, res: Response) => {
   try {
     const { email, password, name, role } = req.body;
 
-    const hashedPassword = bcrypt.hashSync(password, 10);
+    const sanitizedEmail = email?.trim();
+    const sanitizedPassword = password?.trim();
+    const sanitizedName = name?.trim();
+
+    if (!sanitizedEmail || !sanitizedPassword || !sanitizedName) {
+      return res.status(400).json({
+        success: false,
+        message: "Fields cannot be empty",
+      });
+    }
+
+    const existingUser = await prisma.user.findFirst({
+      where: { email: sanitizedEmail },
+    });
+
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "User already exists",
+      });
+    }
+
+    const hashedPassword = bcrypt.hashSync(sanitizedPassword, 10);
 
     const newUser = await prisma.user.create({
       data: {
-        email: email,
+        email: sanitizedEmail,
         password: hashedPassword,
-        name: name,
+        name: sanitizedName,
       },
     });
 
