@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
 import * as dotenv from "dotenv";
 dotenv.config();
+import { sendEmail } from "../services/sendEmail";
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const prisma = new PrismaClient();
@@ -135,6 +136,214 @@ export const signin = async (req: Request, res: Response) => {
       message: "Sign-in successful",
       data: user,
       user_token: token,
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error",
+        error: error.message,
+      });
+    } else {
+      return res.status(500).json({
+        success: false,
+        message: "An unknown error occured",
+      });
+    }
+  }
+};
+
+export const sendEmailWithOTP = async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
+
+    const sanitizedEmail = email?.trim();
+
+    if (!sanitizedEmail) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide an email. Email is Required",
+      });
+    }
+
+    const existingUser = await prisma.user.findFirst({
+      where: { email: sanitizedEmail },
+    });
+
+    if (!existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "User does not exist",
+      });
+    }
+
+    const otp = Math.floor(1000 + Math.random() * 9000);
+
+    const newOTP = await prisma.oTP.create({
+      data: {
+        otp: otp.toString(),
+        userId: existingUser?.id,
+      },
+    });
+
+    const subject = "Expense Tracker OTP Verification";
+    const text = `Your 4 digit OTP code is ${otp}. Please use this code to complete your verification for resetting your account password. Please note that the OTP is valid for 10 minutes.`;
+
+    const emailResponse = await sendEmail(
+      "demo@demomailtrap.com",
+      sanitizedEmail,
+      subject,
+      text
+    );
+
+    if (!emailResponse) {
+      return res.status(500).json({
+        success: false,
+        message: "Failed to send OTP email",
+      });
+    }
+
+    return res.status(201).json({
+      success: true,
+      message: "OTP successfully generated and sent via email",
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error",
+        error: error.message,
+      });
+    } else {
+      return res.status(500).json({
+        success: false,
+        message: "An unknown error occured",
+      });
+    }
+  }
+};
+
+export const validateOTP = async (req: Request, res: Response) => {
+  try {
+    const { email, otp } = req.body;
+
+    const sanitizedEmail = email?.trim();
+    const sanitizedOtp = otp?.trim();
+
+    if (!sanitizedEmail || !sanitizedOtp) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and OTP are required",
+      });
+    }
+
+    const existingUser = await prisma.user.findFirst({
+      where: { email: sanitizedEmail },
+    });
+
+    if (!existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "User does not exist",
+      });
+    }
+
+    const userId = existingUser?.id;
+
+    const otpRecord = await prisma.oTP.findFirst({
+      where: {
+        userId: userId,
+        otp: sanitizedOtp,
+      },
+    });
+
+    if (!otpRecord) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid OTP",
+      });
+    }
+
+    const otpCreationDate = otpRecord?.createdAt;
+
+    const currentTime = new Date();
+    const tenMinutesInMilliseconds = 10 * 60 * 1000;
+    const timeDifference = currentTime.getTime() - otpCreationDate.getTime();
+
+    if (timeDifference > tenMinutesInMilliseconds) {
+      await prisma.oTP.delete({
+        where: {
+          id: otpRecord?.id,
+        },
+      });
+
+      return res.status(400).json({
+        success: false,
+        message: "OTP has expired",
+      });
+    }
+
+    await prisma.oTP.delete({
+      where: {
+        id: otpRecord?.id,
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "OTP is valid",
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error",
+        error: error.message,
+      });
+    } else {
+      return res.status(500).json({
+        success: false,
+        message: "An unknown error occured",
+      });
+    }
+  }
+};
+
+export const resetPassword = async (req: Request, res: Response) => {
+  try {
+    const { email, newPassword } = req.body;
+
+    const sanitizedEmail = email?.trim();
+    const sanitizedNewPassword = newPassword?.trim();
+
+    if (!sanitizedEmail || !sanitizedNewPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and New Password are required",
+      });
+    }
+
+    const existingUser = await prisma.user.findFirst({
+      where: { email: sanitizedEmail },
+    });
+
+    if (!existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "User does not exist",
+      });
+    }
+
+    const hashedNewPassword = bcrypt.hashSync(sanitizedNewPassword, 10);
+
+    await prisma.user.update({
+      where: { id: existingUser.id },
+      data: { password: hashedNewPassword },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Password reset successful",
     });
   } catch (error) {
     if (error instanceof Error) {
