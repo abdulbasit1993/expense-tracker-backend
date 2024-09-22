@@ -14,14 +14,15 @@ datasource db {
 }
 
 model User {
-  id        Int        @id @default(autoincrement())
-  email     String     @unique
-  password  String
-  name      String
-  roles     UserRole[]
-  createdAt DateTime   @default(now()) @map("created_at")
-  updatedAt DateTime   @updatedAt @map("updated_at")
-  OTP       OTP[]
+  id              Int               @id @default(autoincrement())
+  email           String            @unique
+  password        String
+  name            String
+  roles           UserRole[]
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+  OTP             OTP[]
+  ExpenseCategory ExpenseCategory[]
 
   @@map("users")
 }
@@ -41,7 +42,7 @@ model Roles {
 
 model UserRole {
   id     Int   @id @default(autoincrement())
-  user   User  @relation(fields: [userId], references: [id])
+  user   User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId Int   @map("user_id")
   role   Roles @relation(fields: [roleId], references: [id], onDelete: Cascade)
   roleId Int   @map("role_id")
@@ -59,4 +60,16 @@ model OTP {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("otp")
+}
+
+model ExpenseCategory {
+  id            Int    @id @default(autoincrement())
+  name          String
+  createdByUser User   @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+  createdBy     Int    @map("created_by")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("expense_category")
 }
