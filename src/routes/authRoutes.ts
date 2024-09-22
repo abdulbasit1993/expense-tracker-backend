@@ -1,4 +1,4 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
 
 const authController = require("../controllers/authController");
@@ -13,4 +13,4 @@ router.post("/auth/validate-otp", authController.validateOTP);
 
 router.post("/auth/reset-password", authController.resetPassword);
 
-module.exports = router;
+export default router;
