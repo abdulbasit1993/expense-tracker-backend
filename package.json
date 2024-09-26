@@ -6,8 +6,10 @@
     "seed": "ts-node prisma/seed.ts"
   },
   "scripts": {
-    "start": "npx ts-node src/index.ts",
-    "dev": "nodemon src/index.ts"
+    "build": "prisma migrate reset -f",
+    "prisma:generate": "prisma generate",
+    "dev": "nodemon src/index.ts",
+    "start": "npx ts-node src/index.ts"
   },
   "keywords": [],
   "author": "",
