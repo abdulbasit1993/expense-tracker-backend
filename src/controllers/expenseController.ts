@@ -40,7 +40,6 @@ export const addExpenseCategory = async (req: userType, res: Response) => {
     const newExpenseCategory = await prisma.expenseCategory.create({
       data: {
         name: sanitizedName,
-        createdBy: userId,
       },
     });
 
