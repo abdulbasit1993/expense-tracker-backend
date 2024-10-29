@@ -14,15 +14,14 @@ datasource db {
 }
 
 model User {
-  id              Int               @id @default(autoincrement())
-  email           String            @unique
-  password        String
-  name            String
-  roles           UserRole[]
-  createdAt       DateTime          @default(now()) @map("created_at")
-  updatedAt       DateTime          @updatedAt @map("updated_at")
-  OTP             OTP[]
-  ExpenseCategory ExpenseCategory[]
+  id        Int        @id @default(autoincrement())
+  email     String     @unique
+  password  String
+  name      String
+  roles     UserRole[]
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+  OTP       OTP[]
 
   @@map("users")
 }
@@ -30,6 +29,19 @@ model User {
 enum RoleEnum {
   USER
   ADMIN
+}
+
+enum ExpenseCategoryEnum {
+  Housing
+  HealthAndWellness
+  Food
+  Transportation
+  Insurance
+  Education
+  Entertainment
+  Clothing
+  SavingsAndInvestments
+  Other
 }
 
 model Roles {
@@ -63,10 +75,8 @@ model OTP {
 }
 
 model ExpenseCategory {
-  id            Int    @id @default(autoincrement())
-  name          String
-  createdByUser User   @relation(fields: [createdBy], references: [id], onDelete: Cascade)
-  createdBy     Int    @map("created_by")
+  id   Int                 @id @default(autoincrement())
+  name ExpenseCategoryEnum
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
