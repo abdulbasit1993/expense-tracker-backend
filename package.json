@@ -8,6 +8,7 @@
   "scripts": {
     "build": "prisma migrate reset -f",
     "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
     "dev": "nodemon src/index.ts",
     "start": "npx ts-node src/index.ts"
   },
