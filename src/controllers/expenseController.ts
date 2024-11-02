@@ -6,7 +6,8 @@ const prisma = new PrismaClient();
 
 export const addNewExpense = async (req: userType, res: Response) => {
   try {
-    const { title, description, date, expenseCategoryId } = req.body;
+    const { title, description, date, totalAmount, expenseCategoryId } =
+      req.body;
 
     const sanitizedTitle = title.trim();
     const sanitizedDescription = description.trim();
@@ -34,6 +35,13 @@ export const addNewExpense = async (req: userType, res: Response) => {
       });
     }
 
+    if (typeof totalAmount !== "number" || totalAmount <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Total amount must be a positive number",
+      });
+    }
+
     const expenseCategory = await prisma.expenseCategory.findUnique({
       where: { id: expenseCategoryId },
     });
@@ -50,6 +58,7 @@ export const addNewExpense = async (req: userType, res: Response) => {
         date: new Date(date),
         title: sanitizedTitle,
         description: sanitizedDescription,
+        totalAmount: totalAmount,
         expenseCategoryId: expenseCategoryId,
         userId: userId,
       },

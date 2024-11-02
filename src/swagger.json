@@ -1,0 +1,233 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Expense Tracker APIs - v1",
+    "description": "API Docs for the Expense Tracker Application.",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "/"
+    }
+  ],
+  "paths": {
+    "/api/auth/signup": {
+      "post": {
+        "tags": ["Auth"],
+        "description": "Create a new user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "abdulbasit123@gmail.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "Testing123"
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "Abdul Basit"
+                  },
+                  "role": {
+                    "type": "string",
+                    "example": "USER"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {}
+      }
+    },
+    "/api/auth/signin": {
+      "post": {
+        "tags": ["Auth"],
+        "description": "Sign In User",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "abdulbasit123@gmail.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "Testing123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {}
+      }
+    },
+    "/api/auth/forgot-password": {
+      "post": {
+        "tags": ["Auth"],
+        "description": "Forgot Password",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "abdulbasit123@gmail.com"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {}
+      }
+    },
+    "/api/auth/validate-otp": {
+      "post": {
+        "tags": ["Auth"],
+        "description": "Validate OTP Code",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "abdulbasit123@gmail.com"
+                  },
+                  "otp": {
+                    "type": "string",
+                    "example": "2532"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {}
+      }
+    },
+    "/api/auth/reset-password": {
+      "post": {
+        "tags": ["Auth"],
+        "description": "Reset Password",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "abdulbasit123@gmail.com"
+                  },
+                  "newPassword": {
+                    "type": "string",
+                    "example": "Testing123456"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {}
+      }
+    },
+    "/api/user/profile": {
+      "get": {
+        "tags": ["Users"],
+        "description": "Get User Profile",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {}
+      }
+    },
+    "/api/expense-categories": {
+      "get": {
+        "tags": ["Expense Categories"],
+        "description": "Get All Expense Categories",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {}
+      }
+    },
+    "/api/expenses/add": {
+      "post": {
+        "tags": ["Expenses"],
+        "description": "Add a New Expense",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "required": true,
+                    "example": "Bought Television"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Bought television from a local electronics shop for a reasonable amount."
+                  },
+                  "date": {
+                    "type": "date",
+                    "required": true,
+                    "example": "2023-08-20"
+                  },
+                  "totalAmount": {
+                    "type": "number",
+                    "example": 1460
+                  },
+                  "expenseCategoryId": {
+                    "type": "number",
+                    "example": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {}
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

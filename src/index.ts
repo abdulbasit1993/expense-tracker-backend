@@ -1,4 +1,6 @@
 import express from "express";
+import swaggerUi from "swagger-ui-express";
+const swaggerDocument = require("./swagger.json");
 
 const app = express();
 
@@ -14,6 +16,8 @@ import expenseRoutes from "./routes/expenseRoutes";
 app.get("/api", async (req, res) => {
   res.send({ message: "Welcome to Expense Tracker APIs!" });
 });
+
+app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use("/api", authRoutes);
 app.use("/api", userRoutes);
