@@ -22,6 +22,7 @@ model User {
   createdAt DateTime   @default(now()) @map("created_at")
   updatedAt DateTime   @updatedAt @map("updated_at")
   OTP       OTP[]
+  Expense   Expense[]
 
   @@map("users")
 }
@@ -81,5 +82,25 @@ model ExpenseCategory {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  expenses Expense[]
+
   @@map("expense_category")
+}
+
+model Expense {
+  id          Int      @id @default(autoincrement())
+  date        DateTime
+  title       String
+  description String?
+  totalAmount Int      @map("total_amount")
+
+  expenseCategory   ExpenseCategory @relation(fields: [expenseCategoryId], references: [id])
+  expenseCategoryId Int             @map("expense_category_id")
+  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId            Int             @map("user_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("expense")
 }
