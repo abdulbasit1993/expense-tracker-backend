@@ -219,6 +219,92 @@
         },
         "responses": {}
       }
+    },
+    "/api/expenses": {
+      "get": {
+        "tags": ["Expenses"],
+        "description": "Get All Expenses of User",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {}
+      }
+    },
+    "/api/expenses/update": {
+      "put": {
+        "tags": ["Expenses"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Expense ID to update",
+            "required": true
+          }
+        ],
+        "description": "Update Expense",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "required": true,
+                    "example": "Bought Car"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Bought car from Suzuki showroom."
+                  },
+                  "date": {
+                    "type": "date",
+                    "required": true,
+                    "example": "2023-08-20"
+                  },
+                  "totalAmount": {
+                    "type": "number",
+                    "example": 8650000
+                  },
+                  "expenseCategoryId": {
+                    "type": "number",
+                    "example": 15
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {}
+      }
+    },
+    "/api/expenses/delete": {
+      "delete": {
+        "tags": ["Expenses"],
+        "description": "Delete Expense",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Expense ID to delete",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {}
+      }
     }
   },
   "components": {
