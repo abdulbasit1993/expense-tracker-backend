@@ -232,6 +232,26 @@
         "responses": {}
       }
     },
+    "/api/expenses/{id}": {
+      "get": {
+        "tags": ["Expenses"],
+        "description": "Get Single Expense by ID",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the expense to retrieve",
+            "required": true
+          }
+        ],
+        "responses": {}
+      }
+    },
     "/api/expenses/update": {
       "put": {
         "tags": ["Expenses"],
