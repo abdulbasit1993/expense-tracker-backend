@@ -7,6 +7,8 @@ router.post("/expenses/add", extractUser, expenseController.addNewExpense);
 
 router.get("/expenses", extractUser, expenseController.getAllExpensesOfUser);
 
+router.get("/expenses/:id", extractUser, expenseController.getSingleExpense);
+
 router.put("/expenses/update", extractUser, expenseController.updateExpense);
 
 router.delete("/expenses/delete", extractUser, expenseController.deleteExpense);

@@ -81,6 +81,10 @@ export const signup = async (req: Request, res: Response) => {
       },
     });
 
+    const assignedRole = await prisma.roles.findFirst({
+      where: { id: roleId },
+    });
+
     const token = jwt.sign(
       { userId: newUser.id, email: newUser.email },
       process.env.JWT_SECRET,
@@ -90,7 +94,12 @@ export const signup = async (req: Request, res: Response) => {
     res.status(201).json({
       success: true,
       message: "User created successfully",
-      data: newUser,
+      data: {
+        id: newUser.id,
+        email: newUser.email,
+        name: newUser.name,
+        role: assignedRole?.type || "USER",
+      },
       user_token: token,
     });
   } catch (error) {
@@ -107,6 +116,13 @@ export const signin = async (req: Request, res: Response) => {
 
     const user = await prisma.user.findFirst({
       where: { email: email },
+      include: {
+        roles: {
+          include: {
+            role: true,
+          },
+        },
+      },
     });
 
     if (!user) {
@@ -131,10 +147,19 @@ export const signin = async (req: Request, res: Response) => {
       { expiresIn: "48h" }
     );
 
+    const role = user.roles[0]?.role?.type || null;
+
     return res.status(200).json({
       success: true,
       message: "Sign-in successful",
-      data: user,
+      data: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: role,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      },
       user_token: token,
     });
   } catch (error) {
