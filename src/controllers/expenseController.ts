@@ -123,6 +123,69 @@ export const getAllExpensesOfUser = async (req: userType, res: Response) => {
   }
 };
 
+export const getSingleExpense = async (req: userType, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    if (!req.user || !req.user.userId) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    if (typeof id !== "string") {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid ID format",
+      });
+    }
+
+    const sanitizedId = parseInt(id);
+
+    if (isNaN(sanitizedId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid ID",
+      });
+    }
+
+    const { userId } = req.user;
+
+    const expense = await prisma.expense.findFirst({
+      where: { id: sanitizedId, userId: userId },
+      include: {
+        expenseCategory: true,
+      },
+    });
+
+    if (!expense) {
+      return res.status(404).json({
+        success: false,
+        message: "Expense not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: expense,
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error",
+        error: error.message,
+      });
+    } else {
+      return res.status(500).json({
+        success: false,
+        message: "An unknown error occured",
+      });
+    }
+  }
+};
+
 export const updateExpense = async (req: userType, res: Response) => {
   try {
     const { id } = req.query;
