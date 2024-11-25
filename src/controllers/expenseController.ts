@@ -98,9 +98,6 @@ export const getAllExpensesOfUser = async (req: userType, res: Response) => {
 
     const expenses = await prisma.expense.findMany({
       where: { userId: userId },
-      include: {
-        expenseCategory: true,
-      },
     });
 
     return res.status(200).json({
