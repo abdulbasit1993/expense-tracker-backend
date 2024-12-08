@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import { userType } from "../types/globalTypes";
+import exp from "constants";
 
 const prisma = new PrismaClient();
 
@@ -100,9 +101,20 @@ export const getAllExpensesOfUser = async (req: userType, res: Response) => {
       where: { userId: userId },
     });
 
+    const filteredExpenses = expenses?.map((expense) => ({
+      id: expense.id,
+      title: expense.title,
+      date: expense.date,
+      totalAmount: expense.totalAmount,
+      expenseCategoryId: expense.expenseCategoryId,
+      userId: expense.userId,
+      createdAt: expense?.createdAt,
+      updatedAt: expense?.updatedAt,
+    }));
+
     return res.status(200).json({
       success: true,
-      data: expenses,
+      data: filteredExpenses,
     });
   } catch (error) {
     if (error instanceof Error) {
