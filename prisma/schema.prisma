@@ -45,6 +45,20 @@ enum ExpenseCategoryEnum {
   Other
 }
 
+enum IncomeCategoryEnum {
+  Salary
+  Freelance
+  Business
+  Investment
+  Rental
+  Pension
+  GovernmentBenefits
+  Gift
+  Bonus
+  Lottery
+  Other
+}
+
 model Roles {
   id    Int        @id @default(autoincrement())
   type  RoleEnum
@@ -103,4 +117,14 @@ model Expense {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("expense")
+}
+
+model IncomeSource {
+  id   Int                @id @default(autoincrement())
+  name IncomeCategoryEnum
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("income_source")
 }
