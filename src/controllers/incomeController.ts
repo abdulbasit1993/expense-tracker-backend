@@ -83,3 +83,47 @@ export const addNewIncome = async (req: userType, res: Response) => {
     }
   }
 };
+
+export const getAllIncomeOfUser = async (req: userType, res: Response) => {
+  try {
+    if (!req.user || !req.user.userId) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const { userId } = req.user;
+
+    const incomeRecord = await prisma.income.findMany({
+      where: { userId: userId },
+    });
+
+    const filteredIncome = incomeRecord.map((record) => ({
+      id: record.id,
+      date: record.date,
+      title: record.title,
+      amount: record.amount,
+      createdAt: record?.createdAt,
+      updatedAt: record?.updatedAt,
+    }));
+
+    return res.status(200).json({
+      success: true,
+      data: filteredIncome,
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error",
+        error: error.message,
+      });
+    } else {
+      return res.status(500).json({
+        success: false,
+        message: "An unknown error occured",
+      });
+    }
+  }
+};
