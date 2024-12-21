@@ -13,6 +13,7 @@ import userRoutes from "./routes/userRoutes";
 import expenseCategoryRoutes from "./routes/expenseCategoryRoutes";
 import expenseRoutes from "./routes/expenseRoutes";
 import incomeCategoryRoutes from "./routes/incomeCategoryRoutes";
+import incomeRoutes from "./routes/incomeRoutes";
 
 app.get("/api", async (req, res) => {
   res.send({ message: "Welcome to Expense Tracker APIs!" });
@@ -25,6 +26,7 @@ app.use("/api", userRoutes);
 app.use("/api", expenseCategoryRoutes);
 app.use("/api", expenseRoutes);
 app.use("/api", incomeCategoryRoutes);
+app.use("/api", incomeRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running at port ${PORT}`);

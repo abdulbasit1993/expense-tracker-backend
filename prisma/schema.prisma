@@ -23,6 +23,7 @@ model User {
   updatedAt DateTime   @updatedAt @map("updated_at")
   OTP       OTP[]
   Expense   Expense[]
+  Income    Income[]
 
   @@map("users")
 }
@@ -125,6 +126,26 @@ model IncomeSource {
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+  Income    Income[]
 
   @@map("income_source")
+}
+
+model Income {
+  id          Int      @id @default(autoincrement())
+  date        DateTime
+  title       String
+  description String?
+  amount      Int
+
+  incomeSource   IncomeSource @relation(fields: [incomeSourceId], references: [id])
+  incomeSourceId Int          @map("income_source_id")
+
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int  @map("user_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("income")
 }
