@@ -325,6 +325,18 @@
         ],
         "responses": {}
       }
+    },
+    "/api/income-categories": {
+      "get": {
+        "tags": ["Income Categories"],
+        "description": "Get All Income Source Categories",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {}
+      }
     }
   },
   "components": {
