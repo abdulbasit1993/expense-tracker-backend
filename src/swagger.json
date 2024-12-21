@@ -385,6 +385,18 @@
         },
         "responses": {}
       }
+    },
+    "/api/income": {
+      "get": {
+        "tags": ["Income"],
+        "description": "Get All Income of User",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {}
+      }
     }
   },
   "components": {
