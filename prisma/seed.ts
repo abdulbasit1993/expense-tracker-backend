@@ -1,4 +1,9 @@
-import { PrismaClient, RoleEnum, ExpenseCategoryEnum } from "@prisma/client";
+import {
+  PrismaClient,
+  RoleEnum,
+  ExpenseCategoryEnum,
+  IncomeCategoryEnum,
+} from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
@@ -15,6 +20,20 @@ async function main() {
     ExpenseCategoryEnum.SavingsAndInvestments,
     ExpenseCategoryEnum.Transportation,
     ExpenseCategoryEnum.Other,
+  ];
+
+  const incomeCategories = [
+    IncomeCategoryEnum.Salary,
+    IncomeCategoryEnum.Freelance,
+    IncomeCategoryEnum.Business,
+    IncomeCategoryEnum.Investment,
+    IncomeCategoryEnum.Rental,
+    IncomeCategoryEnum.Pension,
+    IncomeCategoryEnum.GovernmentBenefits,
+    IncomeCategoryEnum.Gift,
+    IncomeCategoryEnum.Bonus,
+    IncomeCategoryEnum.Lottery,
+    IncomeCategoryEnum.Other,
   ];
 
   await prisma.roles.deleteMany();
@@ -36,12 +55,23 @@ async function main() {
       })
     )
   );
+
+  await prisma.incomeSource.deleteMany();
+
+  await Promise.all(
+    incomeCategories?.map((cat) =>
+      prisma.incomeSource.create({
+        data: { name: cat },
+      })
+    )
+  );
 }
 
 main()
   .then(async () => {
     console.log("Roles created on database successfully");
     console.log("Expense categories created on database successfully");
+    console.log("Income source categories created on database successfully");
     await prisma.$disconnect();
   })
   .catch(async (e) => {
