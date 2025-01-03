@@ -215,7 +215,7 @@ export const sendEmailWithOTP = async (req: Request, res: Response) => {
     const text = `Your 4 digit OTP code is ${otp}. Please use this code to complete your verification for resetting your account password. Please note that the OTP is valid for 10 minutes.`;
 
     const emailResponse = await sendEmail(
-      "demo@demomailtrap.com",
+      "abasitm.1993@gmail.com",
       sanitizedEmail,
       subject,
       text
