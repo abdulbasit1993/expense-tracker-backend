@@ -159,6 +159,16 @@ export const getSingleIncome = async (req: userType, res: Response) => {
 
     const income = await prisma.income.findFirst({
       where: { id: sanitizedId, userId: userId },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        amount: true,
+        date: true,
+        incomeSource: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
 
     if (!income) {
