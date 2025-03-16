@@ -163,8 +163,15 @@ export const getSingleExpense = async (req: userType, res: Response) => {
 
     const expense = await prisma.expense.findFirst({
       where: { id: sanitizedId, userId: userId },
-      include: {
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        date: true,
+        totalAmount: true,
         expenseCategory: true,
+        createdAt: true,
+        updatedAt: true,
       },
     });
 
